@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Yap</title>
+
+</head>
+<body>
+    <header>
+        <h1>Giriş Yap</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Ana Sayfa</a></li>
+                <li><a href="/register">Kayıt Ol</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="login-form">
+            <h2>Giriş Formu</h2>
+            <form action="/login" method="POST">
+                <label for="username">Kullanıcı Adı:</label>
+                <input type="text" id="username" name="username" required>
+                
+                <label for="password">Şifre:</label>
+                <input type="password" id="password" name="password" required>
+                
+                <button type="submit">Giriş Yap</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>serhanayberkkilic - 08/29/2023</p>
+    </footer>
+</body>
+</html>

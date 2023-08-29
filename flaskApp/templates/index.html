@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kodland Projet</title>
+</head>
+<body>
+    <header>
+        <h1>Kodland Projet</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Ana Sayfa</a></li>
+                <li><a href="/register">Kayıt</a></li>
+                <li><a href="/login">Giriş</a></li>
+                <li><a href="/logout">Çıkış</a></li>
+                <li><a href="/quiz">Sınav</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="weather">
+            <h2>Hava Durumu</h2>
+            <form action="/get_weather" method="POST">
+                <label for="city">Şehir Adı:</label>
+                <input type="text" id="city" name="city" required>
+                <button type="submit">Hava Durumu Getir</button>
+            </form>
+            <div id="weather-forecast">
+                <!-- Hava durumu tahmini burada görüntülenebilir -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>serhanayberkkilic - 08/29/2023</p>
+    </footer>
+</body>
+</html>
