@@ -172,8 +172,23 @@ def login():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    current_username = current_user.username
-    return render_template('dashboard.html')
+    user_answers = UserAnswer.query.filter_by(user_id=current_user.id).all()
+    quiz_results = []
+
+    for user_answer in user_answers:
+        quiz = Quiz.query.get(user_answer.quiz_id)
+        correct_answers = 0
+
+        # Kullanıcının her sorusu doğru mu kontrol ediliyor
+        if user_answer.userOption == Question.query.get(user_answer.question_id).correct_option:
+            correct_answers += 1
+
+    quiz_results.append({
+        'quiz_name': quiz.name,
+        'score': correct_answers
+    })
+
+    return render_template('dashboard.html', quiz_results=quiz_results)
 
 
 @app.route('/login_failed', methods=['GET'])
@@ -266,7 +281,7 @@ def quiz(quiz_number,question_number):
 
 
 @app.route('/submit_answer', methods=['POST'])
-@login_requireds
+@login_required
 def submit_answer():
     # Kullanıcının seçtiği cevap
     selected_option = request.form.get('answer')
