@@ -1,2 +1,7 @@
 from flask import Flask
-app = Flask(__name__, template_folder='../templates')
+from flask_sqlalchemy import SQLAlchemy
+app = Flask(__name__, template_folder='../templates',static_folder='../static')
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///kodland.db'  # SQLite veritabanı bağlantısı
+
+db = SQLAlchemy(app)

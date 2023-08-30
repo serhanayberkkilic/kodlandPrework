@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sınav Sorusu</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='quiz.css')}}">
+</head>
+<body>
+    <header>
+        <h1>Sınav Numarası: {{ quiz_number }} - Soru Numarası:  {{ question_number }}</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Ana Sayfa</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="quiz-question">
+            <h2>Soru</h2>
+            <p>{{ question_text }}</p>
+        </section>
+
+        <section id="quiz-options">
+            <h2>Seçenekler</h2>
+            <form action="/submit_answer" method="POST">
+                <!-- Gizli alanlar -->
+                <input type="hidden" name="quiz_number" value="{{ quiz_number }}">
+                <input type="hidden" name="question_number" value="{{ question_number }}">
+                
+                <ul>
+                    {% for option in options %}
+                    <li>
+                        <input type="radio" id="{{ loop.index }}" name="answer" value="{{ loop.index }}">
+                        <label for="{{ loop.index }}">{{ option }}</label>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <button type="submit">Cevapla</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>serhanayberkkilic - 08/29/2023</p>
+    </footer>
+</body>
+</html>

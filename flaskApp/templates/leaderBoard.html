@@ -1,0 +1,55 @@
+<!-- leaderboard.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liderlik Tablosu</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='leaderboard.css')}}">
+</head>
+<body>
+    <header>
+        <h1>Liderlik Tablosu</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Ana Sayfa</a></li>
+                <li><a href="/register">Kayıt</a></li>
+                <li><a href="/login">Giriş</a></li>
+                <li><a href="/logout">Çıkış</a></li>
+                <li><a href="/quizzes">Sınavlar</a></li>
+                <li><a href="/leaderboard">Skor Tablosu</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="leaderboard">
+            <h2>Liderler</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sıra</th>
+                        <th>Kullanıcı Adı</th>
+                        <th>Skor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for index, user in leaderboard %}
+                    <tr>
+                        <td>{{ index }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.score }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                           
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>serhanayberkkilic - 08/29/2023</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sınavlar</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='quizzes.css')}}">
+</head>
+<body>
+    <header>
+        <h1>Sınavlar</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Ana Sayfa</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="quizzes-list">
+            <h2>Sınavlar Listesi</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Sınav Adı</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for quiz in quizzes %}
+                    <tr>
+                        <td>{{ quiz.id }}</td>
+                        <td><a href="/quiz/{{ quiz.id }}/1" class="quiz-link">{{ quiz.name }}</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    
+    <footer>
+        <p>serhanayberkkilic - 08/29/2023</p>
+    </footer>
+</body>
+</html>

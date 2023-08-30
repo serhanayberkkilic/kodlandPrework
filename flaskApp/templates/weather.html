@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hava Durumu</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='weather.css')}}">
+</head>
+<body>
+    <header>
+        <h1>Hava Durumu</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Ana Sayfa</a></li>
+                <li><a href="/login">Giriş</a></li>
+                <li><a href="/register">Kayıt Ol</a></li>
+                <li><a href="/weather">Hava Durumu</a></li>
+                <li><a href="/quizzes">Sınav</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="current-weather">
+            <h2>Şu Anki Hava Durumu</h2>
+            {% if current_weather %}
+                <p>Şehir: {{ current_weather['location_name'] }}, {{ current_weather['country'] }}</p>
+                <p>Sıcaklık: {{ current_weather['temperature_c'] }}°C / {{ current_weather['temperature_f'] }}°F</p>
+                <p>Durum: {{ current_weather['condition'] }}</p>
+                <p>Rüzgar Hızı: {{ current_weather['wind_speed_kph'] }} km/saat</p>
+                <p>Basınç: {{ current_weather['pressure_mb'] }} mb</p>
+                <p>Nem: {{ current_weather['humidity'] }}%</p>
+                <p>Bulutluluk: {{ current_weather['cloud'] }}%</p>
+                <p>Hissedilen Sıcaklık: {{ current_weather['feelslike_c'] }}°C / {{ current_weather['feelslike_f'] }}°F</p>
+                <p>UV Index: {{ current_weather['uv_index'] }}</p>
+                <p>Rüzgar Şiddeti: {{ current_weather['gust_kph'] }} km/saat</p>
+            {% else %}
+                <p>Hava durumu verileri bulunamadı.</p>
+            {% endif %}
+        </section>
+
+        <section id="weather-forecast">
+            <h2>3 Günlük Hava Durumu Tahmini</h2>
+            <table>
+                <tr>
+                    <th>Tarih</th>
+                    <th>Maksimum Sıcaklık (°C)</th>
+                    <th>Minimum Sıcaklık (°C)</th>
+                    <th>Maksimum Sıcaklık (°F)</th>
+                    <th>Minimum Sıcaklık (°F)</th>
+                    <th>Durum</th>
+                    <th>UV Index</th>
+                </tr>
+                {% if weather_forecast %}
+                    {% for day in weather_forecast %}
+                        <tr>
+                            <td>{{ day['date'] }}</td>
+                            <td>{{ day['max_temp_c'] }}</td>
+                            <td>{{ day['min_temp_c'] }}</td>
+                            <td>{{ day['max_temp_f'] }}</td>
+                            <td>{{ day['min_temp_f'] }}</td>
+                            <td>{{ day['condition'] }}</td>
+                            <td>{{ day['uv_index'] }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="7">Hava durumu tahmini verileri bulunamadı.</td>
+                    </tr>
+                {% endif %}
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>serhanayberkkilic - 08/29/2023</p>
+    </footer>
+</body>
+</html>
