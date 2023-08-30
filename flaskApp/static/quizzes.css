@@ -1,16 +1,20 @@
 /* Genel sayfa stilleri */
 body {
     font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
     margin: 0;
     padding: 0;
-    background-color: #f0f0f0;
 }
 
 header {
     background-color: #333;
     color: #fff;
-    padding: 10px 0;
+    padding: 20px 0;
     text-align: center;
+}
+
+header h1 {
+    margin: 0;
 }
 
 nav ul {
@@ -21,6 +25,12 @@ nav ul {
 nav ul li {
     display: inline;
     margin-right: 20px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
 }
 
 /* Sınavlar Listesi stilleri */

@@ -11,7 +11,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html',current_user=current_user)
 
 
 with app.app_context():
@@ -106,8 +106,6 @@ with app.app_context():
     db.session.commit()
 
 
-
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     try:
@@ -125,21 +123,17 @@ def register():
             except IntegrityError:
                 return redirect(url_for('register_failed')) # Kullanıcı adı zaten varsa kayıt başarısız olur ileride değiştirilecek
 
-
-            return redirect(url_for('register_successful'))
-        return render_template('register.html')
+            login_user(user)
+            return redirect(url_for('dashboard'))
+        return render_template('register.html', current_user=current_user)
 
     except :
         return redirect(url_for('register_failed'))
 
 
-@app.route('/register_successful', methods=['GET'])
-def register_successful():
-    return render_template('register_successful.html')
-
 @app.route('/register_failed', methods=['GET'])
 def register_failed():
-    return render_template('register_failed.html')
+    return render_template('register_failed.html', current_user=current_user)
 
 
 
@@ -166,34 +160,43 @@ def login():
         else:
             return redirect(url_for('login_failed'))
 
-    return render_template('login.html')
+    return render_template('login.html',current_user=current_user)
+
+
+@app.route('/logout', methods=['GET'])
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    user_answers = UserAnswer.query.filter_by(user_id=current_user.id).all()
+    all_quizzes = Quiz.query.all()
     quiz_results = []
-
-    for user_answer in user_answers:
-        quiz = Quiz.query.get(user_answer.quiz_id)
+    for quiz in all_quizzes:
         correct_answers = 0
+        user_answers = UserAnswer.query.filter_by(user_id=current_user.id,quiz_id=quiz.id).all()
+        if len(user_answers) == 0:
+            pass
+        else:
+            for user_answer in user_answers:
+                if user_answer.userOption == Question.query.get(user_answer.question_id).correct_option:
+                    correct_answers += 1
 
-        # Kullanıcının her sorusu doğru mu kontrol ediliyor
-        if user_answer.userOption == Question.query.get(user_answer.question_id).correct_option:
-            correct_answers += 1
 
-    quiz_results.append({
-        'quiz_name': quiz.name,
-        'score': correct_answers
-    })
+        quiz_results.append({
+            'quiz_name': quiz.name,
+            'score': correct_answers
+        })
 
-    return render_template('dashboard.html', quiz_results=quiz_results)
+    return render_template('dashboard.html', quiz_results=quiz_results, current_user=current_user)
 
 
 @app.route('/login_failed', methods=['GET'])
 def login_failed():
-    return render_template('login_failed.html')
+    return render_template('login_failed.html',current_user=current_user)
 
 
 
@@ -256,15 +259,15 @@ def weather():
                     'uv_index': uv_index
                 })
 
-            return render_template('weather.html', current_weather=current_weather, weather_forecast=weather_forecast)
+            return render_template('weather.html', current_weather=current_weather, weather_forecast=weather_forecast, current_user=current_user)
 
-    return render_template('weather.html', current_weather=None, weather_forecast=None)
+    return render_template('weather.html', current_weather=None, weather_forecast=None, current_user=current_user)
 
 
 @app.route('/quizzes', methods=['GET', 'POST'])
 def quizzes():
     datas=db.session.query(Quiz).all()
-    return render_template('quizzes.html',quizzes=datas)
+    return render_template('quizzes.html',quizzes=datas,current_user=current_user)
 
 
 @app.route('/quiz/<int:quiz_number>/<int:question_number>', methods=['GET'])
@@ -277,30 +280,26 @@ def quiz(quiz_number,question_number):
     else:
         question_text=data.question_text
         options=[data.option1,data.option2,data.option3,data.option4]
-        return render_template('quiz.html', quiz_number=quiz_number,question_number=question_number, question_text=question_text, options=options)
+        return render_template('quiz.html', quiz_number=quiz_number,question_number=question_number, question_text=question_text, options=options, current_user=current_user)
 
 
 @app.route('/submit_answer', methods=['POST'])
 @login_required
 def submit_answer():
-    # Kullanıcının seçtiği cevap
     selected_option = request.form.get('answer')
     quiz_number = int(request.form.get('quiz_number'))
     question_number = int(request.form.get('question_number'))
-    # Kullanıcının cevabını saklayın (örneğin, veritabanına kaydedebilirsiniz)
-    #user_answers[(quiz_number, question_number)] = selected_option
 
-    # Bir sonraki soruya geçiş yapın (varsa)
-    return redirect(url_for('quiz', quiz_number=quiz_number, question_number=question_number+1))
+    db.session.add(UserAnswer(user_id=current_user.id,quiz_id=quiz_number,question_id=question_number,userOption=selected_option))
+    db.session.commit()
 
-    '''if next_question_number <= len(quizzes[quiz_number]["questions"]):
-        return redirect(url_for('quiz', quiz_number=quiz_number, question_number=next_question_number))
+    allQuestionslen=len(db.session.query(Question).filter(Question.quiz_id==quiz_number).all())
+
+    if question_number+1 <= allQuestionslen:
+        return redirect(url_for('quiz', quiz_number=quiz_number, question_number=question_number+1))
+
     else:
-        pass
-        # Tüm sorular yanıtlandıysa sonuçları gösterin
-        #return render_template('quiz_result.html', quiz_number=quiz_number, user_answers=user_answers)'''
-
-
+        return redirect(url_for('dashboard'))
 
 # Liderlik tablosu için işlev
 @app.route('/leaderboard', methods=['GET'])
@@ -315,7 +314,7 @@ def leaderboard():
         leaderboard.append({'username': user.username, 'score': user_score})
     
     leaderboard = sorted(leaderboard, key=lambda x: x['score'], reverse=True)
-    return render_template('leaderboard.html', leaderboard=enumerate(leaderboard))
+    return render_template('leaderboard.html', leaderboard=enumerate(leaderboard),current_user=current_user)
 
 # Kullanıcının skorunu hesaplamak için işlev
 def calculate_user_score(user_id):

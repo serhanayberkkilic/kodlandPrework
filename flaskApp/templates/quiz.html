@@ -12,6 +12,16 @@
         <nav>
             <ul>
                 <li><a href="/">Ana Sayfa</a></li>
+                {% if current_user.is_authenticated %}
+                    <li><a href="/dashboard">Profil</a></li>
+                    <li><a href="/quizzes">Sınavlar</a></li>
+                    <li><a href="/logout">Çıkış</a></li>
+                    <li><a href="/leaderboard">Skor Tablosu</a></li>
+                {% else %}
+                    <li><a href="/leaderboard">Skor Tablosu</a></li>
+                    <li><a href="/register">Kayıt</a></li>
+                    <li><a href="/login">Giriş</a></li>
+                {% endif %}
             </ul>
         </nav>
     </header>
