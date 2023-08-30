@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kayıt Başarısız</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='register_failed.css')}}">
+</head>
+<body>
+    <header>
+        <h1>Kayıt Başarısız</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Ana Sayfa</a></li>
+                <li><a href="/login">Giriş</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="registration-failed-message">
+            <h2>Kayıt Başarısız</h2>
+            <p>Üzgünüz, kayıt olurken bir sorun oluştu.</p>
+            <p>Lütfen tekrar deneyin.</p>
+            <a href="/register">Geri Dön</a>
+        </section>
+    </main>
+
+    <footer>
+        <p>serhanayberkkilic - 08/29/2023</p>
+    </footer>
+</body>
+</html>

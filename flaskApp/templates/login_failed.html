@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Başarısız</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='login_failed.css')}}">
+</head>
+<body>
+    <header>
+        <h1>Giriş Başarısız</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Ana Sayfa</a></li>
+                <li><a href="/login">Giriş</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="login-fail-message">
+            <h2>Giriş Başarısız</h2>
+            <p>Üzgünüz, giriş işlemi başarısız oldu. Lütfen kullanıcı adı ve şifrenizi kontrol edin.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>serhanayberkkilic - 08/29/2023</p>
+    </footer>
+</body>
+</html>

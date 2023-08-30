@@ -1,12 +1,13 @@
-from flaskApp.backend.config import app,db
+from flaskApp.backend.config import app,db,login_manager
 from flaskApp.backend.models.questionModel import Question
 from flaskApp.backend.models.userModel import User
 from flaskApp.backend.models.quizModel import Quiz
 from flaskApp.backend.models.userAnswerModel import UserAnswer
 from flask import render_template,request,redirect,url_for
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 import requests
-
+from flask_login import login_user, logout_user, current_user, login_required
 
 @app.route('/')
 def index():
@@ -17,7 +18,6 @@ with app.app_context():
     db.drop_all()
     db.create_all()
 
-    # İlk sınavı ekleyebilirsiniz
     quiz1 = Quiz(
         name="Python'da AI Geliştirme Sınavı"
     )
@@ -59,7 +59,6 @@ with app.app_context():
 
     db.session.add_all([q1, q2])
     
-    # İlk kullanıcıyı ekleyebilirsiniz
     user1 = User(
         username="kullanici1",
         password="parola1"
@@ -73,7 +72,6 @@ with app.app_context():
     db.session.add_all([user1, user2])
 
 
-    # İlk kullanıcı cevaplarını ekleyebilirsiniz
     user_1_answer1 = UserAnswer(
         user_id=1,
         quiz_id=1,
@@ -110,14 +108,78 @@ with app.app_context():
 
 
 
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
-    return render_template('register.html')
+    try:
+        if request.method == 'POST':
+            try:
+                username = request.form['username']
+                password = request.form['password']
 
 
-@app.route('/login')
+                # Kullanıcıyı veritabanına ekleyin
+                user = User(username=username, password=password)
+
+                db.session.add(user)
+                db.session.commit()
+            except IntegrityError:
+                return redirect(url_for('register_failed')) # Kullanıcı adı zaten varsa kayıt başarısız olur ileride değiştirilecek
+
+
+            return redirect(url_for('register_successful'))
+        return render_template('register.html')
+
+    except :
+        return redirect(url_for('register_failed'))
+
+
+@app.route('/register_successful', methods=['GET'])
+def register_successful():
+    return render_template('register_successful.html')
+
+@app.route('/register_failed', methods=['GET'])
+def register_failed():
+    return render_template('register_failed.html')
+
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        
+        user = User.query.filter_by(username=username,password=password).first()
+
+        if user:
+
+            if username==user.username and password==user.password:
+                login_user(user)
+                return redirect(url_for('dashboard'))
+            else:
+                return redirect(url_for('login_failed'))
+        else:
+            return redirect(url_for('login_failed'))
+
     return render_template('login.html')
+
+
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    current_username = current_user.username
+    return render_template('dashboard.html')
+
+
+@app.route('/login_failed', methods=['GET'])
+def login_failed():
+    return render_template('login_failed.html')
+
 
 
 @app.route('/weather', methods=['GET', 'POST'])
@@ -191,6 +253,7 @@ def quizzes():
 
 
 @app.route('/quiz/<int:quiz_number>/<int:question_number>', methods=['GET'])
+@login_required
 def quiz(quiz_number,question_number):
     try:
         data=db.session.query(Question).filter(Question.quiz_id==quiz_number,Question.id==question_number).one()
@@ -203,6 +266,7 @@ def quiz(quiz_number,question_number):
 
 
 @app.route('/submit_answer', methods=['POST'])
+@login_requireds
 def submit_answer():
     # Kullanıcının seçtiği cevap
     selected_option = request.form.get('answer')
